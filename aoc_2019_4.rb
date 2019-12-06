@@ -1,34 +1,28 @@
-def matching?(arr)
-  double = arr.each_cons(2).select {|a,b| a==b } 
-  triple = arr.each_cons(3).select {|a,b,c| a==b && b== c}
-    
-  if triple.any?  && double.any?
-    if triple.flatten.uniq.length != 1 || (triple.flatten + double.flatten).uniq.length == 1
-      return false
+class Array
+  def valid_password?
+    double = self.each_cons(2).select {|a,b| a == b } 
+    triple = self.each_cons(3).select {|a,b,c| a == b && b == c}
+      
+    if triple.any? && double.any? && 
+      (triple.flatten.uniq.length != 1 || 
+      (triple.flatten + double.flatten).uniq.length == 1)
+      return false 
     end  
-  end  
-  true    
+    true    
+  end
 end  
 
-count = 0
+arrs = []
 for i in 178416..676461
   arr = i.to_s.split("")
-  if arr.each_cons(2).count {|a,b| a==b} >= 1 && arr.sort == arr
-    count += 1
+  if arr.each_cons(2).any? {|a,b| a==b} && arr.sort == arr
+    arrs << arr
   end
 end
 
-p count  
+p arrs.length
 
 # 2
-count = 0
-for i in 178416..676461
-  arr = i.to_s.split("")
-  if arr.each_cons(2).count {|a,b| a==b} >= 1 && matching?(arr) && arr.sort == arr
-    count += 1
-  end
-end
-
-p count    
+p arrs.count {|arr| arr.valid_password?}  
 
 
