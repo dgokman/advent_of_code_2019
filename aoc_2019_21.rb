@@ -1,15 +1,5 @@
-class NilClass
-  def method_missing(*args); nil; end
-end
+A = File.read("aoc_2019_21.txt")
 
-class Array
-  def fetch(index)
-    if index < 0
-      return nil
-    end
-    self[index]
-  end
-end
 
 def write_value(mode, arr, i, relative_base)
   if mode == 0
@@ -31,15 +21,12 @@ def value(mode, arr, i, relative_base)
   end  
 end    
 
-@string = ""
-
-def run(arr, input1="")
+def run(arr, input1)
   i = 0
   output = 0
   r = 0
   input_idx = 0
   inputs = input1.split("").map {|a| a.ord}
-
   loop do
     opcode, modes = parameters(arr[i])
     if opcode == 1
@@ -70,7 +57,6 @@ def run(arr, input1="")
         p output
         return
       end    
-      @string << output
       i += 2
     elsif opcode == 5
       if value(modes[0].to_i, arr, i+1, r) != 0
@@ -120,126 +106,15 @@ def parameters(dig)
   [opcode, modes]
 end
 
-A = File.read("aoc_2019_17.txt")
+# trial and error
+
+# 1
+
 arr = A.split(",").map(&:to_i)
+run(arr, "NOT A T\nOR T J\nNOT C T\nAND D T\nOR T J\nWALK\n")
 
 # 2
-require 'set'
 
-arr[0] = 2  
-run(arr)  
-
-field = @string.split("\n").map {|x| x.split("")}
-start = nil
-scaffolds = []
-i = 0
-j = 0
-while i < field.length
-  while j < field[i].length
-    if field[i][j] == "^"
-      start = [i,j]
-    elsif field[i][j] == "#" 
-      scaffolds << [i,j]
-    end  
-    j += 1
-  end
-  i += 1
-  j = 0
-end
-
-scaffolds = scaffolds.sort
-
-i, j = start
-
-dir = "E"
-relative_dir = "R"
-dir_string = ""
-count = 0
-visited = Set.new
-
-loop do
-  adjacent_acres = [
-    field.fetch(i-1).fetch(j), 
-    field.fetch(i+1).fetch(j), 
-    field.fetch(i).fetch(j-1), 
-    field.fetch(i).fetch(j+1)]
-  if [adjacent_acres[0..1].count("#"), adjacent_acres[2..3].count("#")] == [1,1]
-
-    dir_string << "#{relative_dir},#{count},"
-    
-    count = 1
-    if dir == "E"
-      if adjacent_acres[0..1].index("#") == 0
-        dir = "N"
-        relative_dir = "L"
-        i -= 1
-      else
-        dir = "S"
-        relative_dir = "R"
-        i += 1
-      end
-    elsif dir == "W"
-      if adjacent_acres[0..1].index("#") == 0
-        dir = "N"
-        relative_dir = "R"
-        i -= 1
-      else
-        dir = "S"
-        relative_dir = "L"
-        i += 1
-      end
-    elsif dir == "N"
-      if adjacent_acres[2..3].index("#") == 0
-        dir = "W"
-        relative_dir = "L"
-        j -= 1
-      else
-        dir = "E"
-        relative_dir = "R"
-        j += 1
-      end 
-    else
-      if adjacent_acres[2..3].index("#") == 0
-        dir = "W"
-        relative_dir = "R"
-        j -= 1
-      else
-        dir = "E"
-        relative_dir = "L"
-        j += 1
-      end
-    end
-  else
-    count += 1
-    case dir
-    when "E"
-      j += 1
-    when "W"
-      j -= 1
-    when "N"
-      i -= 1
-    when "S"
-      i += 1
-    end
-  end
-  visited << [i,j]
-  if visited.sort == scaffolds
-    dir_string << "#{relative_dir}#{count},"
-    break
-  end  
-end  
-
-# manually found patterns from dir_string
 arr = A.split(",").map(&:to_i)
-
-arr[0] = 2  
-
-a = "R,6,L,10,R,8,R,8\n"
-b = "R,12,L,10,R,6,L,10\n"
-c = "R,12,L,8,L,10\n"
-
-functions = "A,C,A,B,C,B,A,C,A,B\n"
-
-input = functions + a + b + c + "y\n"
-run(arr, input)
-
+run(arr, "NOT A T\nOR T J\nNOT C T\nAND D T\nAND H T\nOR T J\nNOT B T\nAND D T\nOR T J\nRUN\n")
+    
